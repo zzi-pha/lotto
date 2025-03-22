@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>로또생성기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+  
+    h1 {
+      font-size: 5vw;
+    }
+  
+    input[type="text"] {
+      font-size: 3vw;
+      padding: 10px;
+      width: 50%;
+      max-width: 500px; 
+    }
+  
+    input[type="button"] {
+      font-size: 3vw;
+      padding: 15px 30px;
+      margin-top: 20px;
+      width: 50%;
+      max-width: 500px;
+    }
+  
+    #resultDiv {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+    }
+  
+    #resultDiv ul {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      font-size: 1.5vw;
+      display: inline-block;
+      text-align: left;
+    }
+  
+    #resultDiv li {
+      margin: 10px 0;
+      font-size: inherit;
+    }
+
+    #resultDiv li::before {
+      content: "• ";
+      padding-right: 10px;
+    }
+  
+    /* 모바일 화면용 */
+    @media screen and (max-width: 768px) {
+      h1 {
+        font-size: 10vw;
+      }
+  
+      input[type="text"], input[type="button"] {
+        font-size: 6vw;
+        width: 80%;
+      }
+  
+      #resultDiv ul {
+        font-size: 5vw;
+      }
+    }
+  
+    /* 아주 큰 화면용 */
+    @media screen and (min-width: 1920px) {
+      h1 {
+        font-size: 3vw;
+      }
+  
+      input[type="text"], input[type="button"] {
+        font-size: 1.5vw;
+        width: 40%;
+      }
+  
+      #resultDiv ul {
+        font-size: 1vw;
+      }
+    }
+  </style>
+  <script type="text/javascript">
+window.addEventListener('DOMContentLoaded', function() {
+    const body = document.querySelector('body');
+    const btn = document.querySelector('#generateButton');
+    const resultList = document.querySelector('#resultDiv ul');
+    const colors = ['palegreen', 'aliceblue', 'lemonchiffon', 'Lavender', 'Lavenderblush', 'honeydew', 'oldlace', 'thistle', 'seashell', 'azure', 'lightpink', 'mistyrose', 'whitesmoke', 'lightsteelblue'];
+
+    btn.addEventListener('click', function() {
+        colorChange();
+        generateNumbers();
+    });
+
+    function colorChange() {
+        const colorIdx = crypto.getRandomValues(new Uint32Array(1))[0] % colors.length;
+        body.style.backgroundColor = colors[colorIdx];
+    }
+
+    function generateNumbers() {
+        const maxNumber = 42;
+        const ballsDrawn = 6;
+        const hold = new Array(maxNumber + 1).fill(0);
+        let numbersArr = [];
+
+        for (let i = 0; i < ballsDrawn; i++) {
+            let random;
+            do {
+                random = (crypto.getRandomValues(new Uint32Array(1))[0] % maxNumber) + 1;
+            } while (hold[random] === 1);
+            hold[random] = 1;
+            numbersArr.push(random);
+        }
+
+        numbersArr.sort((a, b) => a - b);
+
+        document.lottery.numbers.value = numbersArr.join(" ");
+
+        const newLi = document.createElement('li');
+        newLi.textContent = numbersArr.join("  ");
+        resultList.appendChild(newLi);
+    }
+});
+  </script>
+</head>
+<body>
+  <h1>로또번호 생성기</h1>
+  <form name="lottery">
+    당첨 번호:<br><br>
+    <input type="text" name="numbers" size=12 maxlength=50 value=""><br><br>
+    <input type="button" id="generateButton" value="당첨번호 내놔">
+  </form>
+  <div id="resultDiv">
+    <ul></ul>
+  </div>
+</body>
+</html>
