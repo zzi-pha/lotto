@@ -86,13 +86,13 @@
     }
   </style>
   <script type="text/javascript">
-window.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('DOMContentLoaded', function () {
     const body = document.querySelector('body');
     const btn = document.querySelector('#generateButton');
     const resultList = document.querySelector('#resultDiv ul');
     const colors = ['palegreen', 'aliceblue', 'lemonchiffon', 'Lavender', 'Lavenderblush', 'honeydew', 'oldlace', 'thistle', 'seashell', 'azure', 'lightpink', 'mistyrose', 'whitesmoke', 'lightsteelblue'];
 
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
         colorChange();
         generateNumbers();
     });
@@ -105,24 +105,21 @@ window.addEventListener('DOMContentLoaded', function() {
     function generateNumbers() {
         const maxNumber = 42;
         const ballsDrawn = 6;
-        const hold = new Array(maxNumber + 1).fill(0);
-        let numbersArr = [];
+        let numbersArr = Array.from({ length: maxNumber }, (_, i) => i + 1);
 
-        for (let i = 0; i < ballsDrawn; i++) {
-            let random;
-            do {
-                random = (crypto.getRandomValues(new Uint32Array(1))[0] % maxNumber) + 1;
-            } while (hold[random] === 1);
-            hold[random] = 1;
-            numbersArr.push(random);
+        
+        for (let i = numbersArr.length - 1; i > 0; i--) {
+            const randomIdx = crypto.getRandomValues(new Uint32Array(1))[0] % (i + 1);
+            [numbersArr[i], numbersArr[randomIdx]] = [numbersArr[randomIdx], numbersArr[i]];
         }
 
-        numbersArr.sort((a, b) => a - b);
+     
+        const selectedNumbers = numbersArr.slice(0, ballsDrawn).sort((a, b) => a - b);
 
-        document.lottery.numbers.value = numbersArr.join(" ");
+        document.lottery.numbers.value = selectedNumbers.join(" ");
 
         const newLi = document.createElement('li');
-        newLi.textContent = numbersArr.join("  ");
+        newLi.textContent = selectedNumbers.join("  ");
         resultList.appendChild(newLi);
     }
 });
